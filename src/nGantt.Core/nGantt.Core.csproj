@@ -12,7 +12,4 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Zametek.Common.ProjectPlan\Zametek.Common.ProjectPlan.csproj" />
-  </ItemGroup>
 </Project>

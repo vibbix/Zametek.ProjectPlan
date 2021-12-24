@@ -2,17 +2,16 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:behaviors="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:zi="clr-namespace:Zametek.Wpf.Core;assembly=Zametek.Windows.Interactivity.Core"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              xmlns:prism="http://prismlibrary.com/" 
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"  
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Zametek.View.ProjectPlan"
              xmlns:properties="clr-namespace:Zametek.Resource.ProjectPlan;assembly=Zametek.Resource.ProjectPlan"
              xmlns:zmg="clr-namespace:Zametek.Maths.Graphs;assembly=Zametek.Maths.Graphs.Primitives"
              xmlns:common="clr-namespace:Zametek.Common.ProjectPlan;assembly=Zametek.Common.ProjectPlan"
              xmlns:vm="clr-namespace:Zametek.ViewModel.ProjectPlan;assembly=Zametek.ViewModel.ProjectPlan"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" 
+             xmlns:misc="clr-namespace:Zametek.View.ProjectPlan.Miscellaneous"
              prism:ViewModelLocator.AutoWireViewModel="False"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="1060">
@@ -138,7 +137,7 @@
 
                                     <behaviors:Interaction.Triggers>
                                         <behaviors:EventTrigger EventName="SelectionChanged">
-                                            <zi:EventToCommand Command="{Binding Path=SetSelectedManagedResourcesCommand, Mode=OneWay}"
+                                            <misc:EventToCommand Command="{Binding Path=SetSelectedManagedResourcesCommand, Mode=OneWay}"
                                                                PassEventArgsToCommand="True"/>
                                         </behaviors:EventTrigger>
                                     </behaviors:Interaction.Triggers>
