@@ -1,5 +1,6 @@
 ﻿using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Prism;
 using Prism.Commands;
@@ -110,7 +111,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     {
                         Width = EarnedValueChartOutputWidth,
                         Height = EarnedValueChartOutputHeight,
-                        Background = OxyColors.White
+                        //Background = OxyColors.White
                     };
                     BitmapSource bitmap = pngExporter.ExportToBitmap(EarnedValueChartPlotModel);
                     System.Windows.Clipboard.SetImage(bitmap);
@@ -249,9 +250,11 @@ namespace Zametek.ViewModel.ProjectPlan
                     plotModel = new PlotModel();
                     plotModel.Axes.Add(BuildEarnedValueChartXAxis());
                     plotModel.Axes.Add(BuildEarnedValueChartYAxis());
-                    plotModel.LegendPlacement = LegendPlacement.Outside;
-                    plotModel.LegendPosition = LegendPosition.RightMiddle;
-
+                    plotModel.Legends.Add(new Legend
+                    {
+                        LegendPlacement = LegendPlacement.Outside,
+                        LegendPosition = LegendPosition.RightMiddle
+                    });
                     var lineSeries = new LineSeries();
                     m_DateTimeCalculator.UseBusinessDays(UseBusinessDays);
 

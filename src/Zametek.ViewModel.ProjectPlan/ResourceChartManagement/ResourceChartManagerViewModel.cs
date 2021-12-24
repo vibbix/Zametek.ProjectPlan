@@ -1,5 +1,6 @@
 ﻿using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using Prism;
 using Prism.Commands;
@@ -111,7 +112,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     {
                         Width = ResourceChartOutputWidth,
                         Height = ResourceChartOutputHeight,
-                        Background = OxyColors.White
+                        //Background = OxyColors.White
                     };
                     BitmapSource bitmap = pngExporter.ExportToBitmap(ResourceChartPlotModel);
                     System.Windows.Clipboard.SetImage(bitmap);
@@ -248,8 +249,11 @@ namespace Zametek.ViewModel.ProjectPlan
                         plotModel = new PlotModel();
                         plotModel.Axes.Add(BuildResourceChartXAxis());
                         plotModel.Axes.Add(BuildResourceChartYAxis());
-                        plotModel.LegendPlacement = LegendPlacement.Outside;
-                        plotModel.LegendPosition = LegendPosition.RightMiddle;
+                        plotModel.Legends.Add(new Legend
+                        {
+                            LegendPlacement = LegendPlacement.Outside,
+                            LegendPosition = LegendPosition.RightTop
+                        });
 
                         var total = new List<int>();
                         m_DateTimeCalculator.UseBusinessDays(UseBusinessDays);
