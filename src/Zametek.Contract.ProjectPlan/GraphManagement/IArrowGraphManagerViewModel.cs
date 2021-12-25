@@ -7,8 +7,6 @@ namespace Zametek.Contract.ProjectPlan
     public interface IArrowGraphManagerViewModel
         : INamed
     {
-        IInteractionRequest NotificationInteractionRequest { get; }
-
         bool IsBusy { get; }
 
         bool HasStaleArrowGraph { get; }

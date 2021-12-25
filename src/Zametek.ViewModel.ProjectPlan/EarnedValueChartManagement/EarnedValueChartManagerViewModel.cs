@@ -6,6 +6,7 @@ using Prism;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +18,7 @@ using System.Windows.Media.Imaging;
 using Zametek.Contract.ProjectPlan;
 using Zametek.Event.ProjectPlan;
 using Zametek.Maths.Graphs;
+using Zametek.ViewModel.ProjectPlan.Miscellaneous;
 
 namespace Zametek.ViewModel.ProjectPlan
 {
@@ -37,8 +39,7 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly ISettingService m_SettingService;
         private readonly IDateTimeCalculator m_DateTimeCalculator;
         private readonly IEventAggregator m_EventService;
-
-        private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
+        private readonly IDialogService m_DialogService;
 
         private SubscriptionToken m_GraphCompilationUpdatedSubscriptionToken;
 
@@ -53,7 +54,8 @@ namespace Zametek.ViewModel.ProjectPlan
             IFileDialogService fileDialogService,
             ISettingService settingService,
             IDateTimeCalculator dateTimeCalculator,
-            IEventAggregator eventService)
+            IEventAggregator eventService,
+            IDialogService dialogService)
             : base(eventService)
         {
             m_Lock = new object();
@@ -62,8 +64,7 @@ namespace Zametek.ViewModel.ProjectPlan
             m_SettingService = settingService ?? throw new ArgumentNullException(nameof(settingService));
             m_DateTimeCalculator = dateTimeCalculator ?? throw new ArgumentNullException(nameof(dateTimeCalculator));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
-
-            m_NotificationInteractionRequest = new InteractionRequest<Notification>();
+            m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
             m_EarnedValueChartPointSet = new List<EarnedValuePoint>();
             EarnedValueChartPlotModel = null;
@@ -365,16 +366,6 @@ namespace Zametek.ViewModel.ProjectPlan
             }
         }
 
-        private void DispatchNotification(string title, object content)
-        {
-            m_NotificationInteractionRequest.Raise(
-                new Notification
-                {
-                    Title = title,
-                    Content = content
-                });
-        }
-
         #endregion
 
         #region Public Methods
@@ -398,7 +389,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        DispatchNotification(
+                        m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -412,7 +403,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -428,8 +419,6 @@ namespace Zametek.ViewModel.ProjectPlan
         #region IEarnedValueChartManagerViewModel Members
 
         public string Title => Resource.ProjectPlan.Resources.Label_EarnedValueChartsViewTitle;
-
-        public IInteractionRequest NotificationInteractionRequest => m_NotificationInteractionRequest;
 
         public bool IsBusy
         {

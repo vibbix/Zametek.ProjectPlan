@@ -1,4 +1,4 @@
-﻿using Prism.Interactivity.InteractionRequest;
+﻿using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using Zametek.Contract.ProjectPlan;
 namespace Zametek.ViewModel.ProjectPlan
 {
     public class ArrowGraphSettingsManagerConfirmation
-        : Confirmation
+        : IDialogResult
     {
         #region Fields
 
@@ -60,6 +60,19 @@ namespace Zametek.ViewModel.ProjectPlan
             }
         }
 
+        public IDialogParameters Parameters
+        {
+            get;
+            private set;
+        } = new DialogParameters();
+
+
+        public ButtonResult Result
+        {
+            get;
+            private set;
+        }
+
         #endregion
 
         #region Private Methods
@@ -88,5 +101,11 @@ namespace Zametek.ViewModel.ProjectPlan
         }
 
         #endregion
+
+        public ArrowGraphSettingsManagerConfirmation withButtonResult(ButtonResult result)
+        {
+            this.Result = result;
+            return this;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Zametek.ViewModel.ProjectPlan
     public class ResourceSettingsManagerViewModel
         : BasicConfirmationViewModel, IResourceSettingsManagerViewModel
     {
+
+        private ResourceSettingsManagerConfirmation _confirmation;
         #region Ctors
 
         public ResourceSettingsManagerViewModel()
@@ -30,6 +33,19 @@ namespace Zametek.ViewModel.ProjectPlan
         public ObservableCollection<IManagedResourceViewModel> SelectedResources
         {
             get;
+        }
+
+        public ResourceSettingsManagerConfirmation Confirmation
+        {
+            get {  return _confirmation; }
+            set
+            {
+                SetProperty(ref _confirmation, value, nameof(Confirmation));
+                RaisePropertyChanged(nameof(Resources));
+                RaisePropertyChanged(nameof(DefaultUnitCost));
+                RaisePropertyChanged(nameof(DisableResources));
+                RaisePropertyChanged(nameof(ActivateResources));
+            }
         }
 
         #endregion
@@ -167,22 +183,17 @@ namespace Zametek.ViewModel.ProjectPlan
 
         #region Overrides
 
-        public override INotification Notification
+
+        public override void RaiseRequestClose(IDialogResult dialogResult)
         {
-            get
-            {
-                return base.Notification;
-            }
-            set
-            {
-                base.Notification = value;
-                RaisePropertyChanged(nameof(Resources));
-                RaisePropertyChanged(nameof(DefaultUnitCost));
-                RaisePropertyChanged(nameof(DisableResources));
-                RaisePropertyChanged(nameof(ActivateResources));
-            }
+            base.RaiseRequestClose(Confirmation.withButtonResult(dialogResult.Result));
         }
 
+        public override void OnDialogOpened(IDialogParameters parameters)
+        {
+            base.OnDialogOpened(parameters);
+            Confirmation = parameters.GetValue<ResourceSettingsManagerConfirmation>("confirmation");
+        }
         #endregion
 
         #region IResourcesManagerViewModel Members
@@ -191,7 +202,7 @@ namespace Zametek.ViewModel.ProjectPlan
         {
             get
             {
-                var notification = (ResourceSettingsManagerConfirmation)Notification;
+                var notification = Confirmation;
                 if (notification != null)
                 {
                     return notification.DefaultUnitCost;
@@ -200,7 +211,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             set
             {
-                var notification = (ResourceSettingsManagerConfirmation)Notification;
+                var notification = Confirmation;
                 if (notification != null)
                 {
                     notification.DefaultUnitCost = value;
@@ -213,7 +224,7 @@ namespace Zametek.ViewModel.ProjectPlan
         {
             get
             {
-                var notification = (ResourceSettingsManagerConfirmation)Notification;
+                var notification = Confirmation;
                 if (notification != null)
                 {
                     return notification.AreDisabled;
@@ -222,7 +233,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             set
             {
-                var notification = (ResourceSettingsManagerConfirmation)Notification;
+                var notification = Confirmation;
                 if (notification != null)
                 {
                     notification.AreDisabled = value;
@@ -244,7 +255,7 @@ namespace Zametek.ViewModel.ProjectPlan
         {
             get
             {
-                return ((ResourceSettingsManagerConfirmation)Notification).Resources;
+                return (Confirmation).Resources;
             }
         }
 

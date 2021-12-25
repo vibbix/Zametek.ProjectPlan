@@ -1,17 +1,20 @@
 ﻿using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using System;
 using System.Windows.Input;
 
 namespace Zametek.ViewModel.ProjectPlan
 {
     public class BasicNotificationViewModel
-        : BindableBase, IInteractionRequestAware
+        : BindableBase, IDialogAware
     {
         #region Fields
 
-        private INotification m_Notification;
+        private string _title = "Notification";
+        private object _content = null;
+
 
         #endregion
 
@@ -28,17 +31,30 @@ namespace Zametek.ViewModel.ProjectPlan
 
         public object Content
         {
-            get
-            {
-                return Notification?.Content;
-            }
+            get{ return _content; }
+            private set{ SetProperty(ref _content, value); }
         }
+
+        public string Title
+        {
+            get { return _title; }
+            set { SetProperty(ref _title, value); }
+        }
+
 
         public Action OnClose
         {
             get;
             set;
         }
+
+        public Action FinishInteraction
+        {
+            get;
+            set;
+        }
+
+        public event Action<IDialogResult> RequestClose;
 
         #endregion
 
@@ -57,8 +73,7 @@ namespace Zametek.ViewModel.ProjectPlan
         public virtual void Confirm()
         {
             ConfirmInteraction?.Invoke();
-            FinishInteraction?.Invoke();
-            OnClose?.Invoke();
+            RaiseRequestClose(new DialogResult(ButtonResult.OK));
         }
 
         public Action ConfirmInteraction
@@ -69,26 +84,30 @@ namespace Zametek.ViewModel.ProjectPlan
 
         #endregion
 
-        #region IInteractionRequestAware
 
-        public Action FinishInteraction
+        #region IDialogAware
+        public virtual bool CanCloseDialog()
         {
-            get;
-            set;
+            return true;
         }
 
-        public virtual INotification Notification
+        public virtual void OnDialogClosed()
         {
-            get
-            {
-                return m_Notification;
-            }
-            set
-            {
-                m_Notification = value;
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Content));
-            }
+            
+        }
+
+
+        public virtual void OnDialogOpened(IDialogParameters parameters)
+        {
+            Title = parameters.GetValue<string>("title");
+            Content = parameters.GetValue<object>("content");
+        }
+
+        public virtual void RaiseRequestClose(IDialogResult dialogResult)
+        {
+            FinishInteraction?.Invoke();
+            OnClose?.Invoke();
+            RequestClose?.Invoke(dialogResult);
         }
 
         #endregion

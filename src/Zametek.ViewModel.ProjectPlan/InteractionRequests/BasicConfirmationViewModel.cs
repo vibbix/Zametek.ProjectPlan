@@ -1,5 +1,6 @@
 ﻿using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System;
 using System.Windows.Input;
 
@@ -9,8 +10,6 @@ namespace Zametek.ViewModel.ProjectPlan
         : BasicNotificationViewModel
     {
         #region Fields
-
-        private IConfirmation m_Confirmation;
 
         #endregion
 
@@ -38,12 +37,8 @@ namespace Zametek.ViewModel.ProjectPlan
         public virtual void Cancel()
         {
             ConfirmInteraction?.Invoke();
-            if (m_Confirmation != null)
-            {
-                m_Confirmation.Confirmed = false;
-            }
-            FinishInteraction?.Invoke();
-            OnClose?.Invoke();
+            CancelInteraction?.Invoke();
+            RaiseRequestClose(new DialogResult(ButtonResult.Cancel));
         }
 
         public Action CancelInteraction
@@ -55,30 +50,9 @@ namespace Zametek.ViewModel.ProjectPlan
         #endregion
 
         #region Overrides
-
-        public override void Confirm()
+        public override bool CanCloseDialog()
         {
-            ConfirmInteraction?.Invoke();
-            if (m_Confirmation != null)
-            {
-                m_Confirmation.Confirmed = true;
-            }
-            FinishInteraction?.Invoke();
-            OnClose?.Invoke();
-        }
-
-        public override INotification Notification
-        {
-            get
-            {
-                return m_Confirmation;
-            }
-            set
-            {
-                m_Confirmation = value as IConfirmation;
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Content));
-            }
+            return false;
         }
 
         #endregion

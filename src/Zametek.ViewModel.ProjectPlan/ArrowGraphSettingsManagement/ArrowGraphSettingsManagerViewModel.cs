@@ -1,4 +1,5 @@
 ﻿using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using Zametek.Contract.ProjectPlan;
 
@@ -7,6 +8,10 @@ namespace Zametek.ViewModel.ProjectPlan
     public class ArrowGraphSettingsManagerViewModel
         : BasicConfirmationViewModel, IArrowGraphSettingsManagerViewModel
     {
+        #region Fields
+        private ArrowGraphSettingsManagerConfirmation managerConfirmation;
+        #endregion
+
         #region Ctors
 
         public ArrowGraphSettingsManagerViewModel()
@@ -16,21 +21,12 @@ namespace Zametek.ViewModel.ProjectPlan
 
         #endregion
 
-        #region Overrides
+        #region Properties
+        public ArrowGraphSettingsManagerConfirmation Confirmation {
+            get { return managerConfirmation; }
+            private set { SetProperty(ref managerConfirmation, value); }
 
-        public override INotification Notification
-        {
-            get
-            {
-                return base.Notification;
-            }
-            set
-            {
-                base.Notification = value;
-                RaisePropertyChanged(nameof(ActivitySeverities));
-            }
         }
-
         #endregion
 
         #region IArrowGraphSettingsManagerViewModel Members
@@ -39,10 +35,21 @@ namespace Zametek.ViewModel.ProjectPlan
         {
             get
             {
-                return ((ArrowGraphSettingsManagerConfirmation)Notification).ActivitySeverities;
+                return Confirmation.ActivitySeverities;
             }
         }
 
         #endregion
+
+        public override void RaiseRequestClose(IDialogResult dialogResult)
+        {
+            base.RaiseRequestClose(this.managerConfirmation.withButtonResult(dialogResult.Result));
+        }
+
+        public override void OnDialogOpened(IDialogParameters parameters)
+        {
+            base.OnDialogOpened(parameters);
+            Confirmation = parameters.GetValue<ArrowGraphSettingsManagerConfirmation>("confirmation");
+        }
     }
 }

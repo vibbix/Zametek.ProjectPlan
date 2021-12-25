@@ -1,4 +1,4 @@
-﻿using Prism.Interactivity.InteractionRequest;
+﻿using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,7 +9,7 @@ using Zametek.Contract.ProjectPlan;
 namespace Zametek.ViewModel.ProjectPlan
 {
     public class ResourceSettingsManagerConfirmation
-        : Confirmation
+        : IDialogResult
     {
         #region Ctors
 
@@ -58,6 +58,18 @@ namespace Zametek.ViewModel.ProjectPlan
                 };
             }
         }
+        public IDialogParameters Parameters
+        {
+            get;
+            private set;
+        } = new DialogParameters();
+
+
+        public ButtonResult Result
+        {
+            get;
+            private set;
+        }
 
         #endregion
 
@@ -74,5 +86,11 @@ namespace Zametek.ViewModel.ProjectPlan
         }
 
         #endregion
+
+        public ResourceSettingsManagerConfirmation withButtonResult(ButtonResult result)
+        {
+            this.Result = result;
+            return this;
+        }
     }
 }

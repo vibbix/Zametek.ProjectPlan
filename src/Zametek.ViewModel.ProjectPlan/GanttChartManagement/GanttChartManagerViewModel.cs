@@ -3,6 +3,7 @@ using Prism;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using Zametek.Common.ProjectPlan;
 using Zametek.Contract.ProjectPlan;
 using Zametek.Event.ProjectPlan;
 using Zametek.Maths.Graphs;
+using Zametek.ViewModel.ProjectPlan.Miscellaneous;
 
 namespace Zametek.ViewModel.ProjectPlan
 {
@@ -25,8 +27,7 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly ICoreViewModel m_CoreViewModel;
         private readonly IMapper m_Mapper;
         private readonly IEventAggregator m_EventService;
-
-        private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
+        private readonly IDialogService m_DialogService;
 
         private SubscriptionToken m_GraphCompiledSubscriptionToken;
         private SubscriptionToken m_ArrowGraphSettingsUpdatedSubscriptionToken;
@@ -42,15 +43,16 @@ namespace Zametek.ViewModel.ProjectPlan
         public GanttChartManagerViewModel(
             ICoreViewModel coreViewModel,
             IMapper mapper,
-            IEventAggregator eventService)
+            IEventAggregator eventService,
+            IDialogService dialogService)
             : base(eventService)
         {
             m_Lock = new object();
             m_CoreViewModel = coreViewModel ?? throw new ArgumentNullException(nameof(coreViewModel));
             m_Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
+            m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
-            m_NotificationInteractionRequest = new InteractionRequest<Notification>();
 
             InitializeCommands();
             SubscribeToEvents();
@@ -107,7 +109,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -221,23 +223,11 @@ namespace Zametek.ViewModel.ProjectPlan
             PublishGanttChartDataUpdatedPayload();
         }
 
-        private void DispatchNotification(string title, object content)
-        {
-            m_NotificationInteractionRequest.Raise(
-                new Notification
-                {
-                    Title = title,
-                    Content = content
-                });
-        }
-
         #endregion
 
         #region IGanttChartManagerViewModel Members
 
         public string Title => Resource.ProjectPlan.Resources.Label_GanttChartViewTitle;
-
-        public IInteractionRequest NotificationInteractionRequest => m_NotificationInteractionRequest;
 
         public DateTime ProjectStart => m_CoreViewModel.ProjectStart;
 

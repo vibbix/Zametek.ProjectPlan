@@ -7,8 +7,6 @@ namespace Zametek.Contract.ProjectPlan
     public interface IEarnedValueChartManagerViewModel
         : INamed
     {
-        IInteractionRequest NotificationInteractionRequest { get; }
-
         bool IsBusy { get; }
 
         bool HasStaleOutputs { get; }

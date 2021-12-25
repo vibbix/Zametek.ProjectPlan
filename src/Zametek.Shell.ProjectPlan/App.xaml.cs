@@ -4,6 +4,7 @@ using Prism.DryIoc;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
+using Prism.Services.Dialogs;
 using System;
 using System.Globalization;
 using System.Threading;
@@ -51,6 +52,12 @@ namespace Zametek.Shell.ProjectPlan
             containerRegistry.Register<IFileDialogService, FileDialogService>();
             containerRegistry.Register<IProjectService, ProjectService>();
             containerRegistry.Register<ISettingService, SettingService>();
+            containerRegistry.Register<IDialogService, DialogService>();
+
+            containerRegistry.RegisterDialog<BasicNotificationView, BasicNotificationViewModel>("NotificationDialog");
+            containerRegistry.RegisterDialog<BasicConfirmationView, BasicConfirmationViewModel>("ConfirmationDialog");
+            containerRegistry.RegisterDialog<ArrowGraphSettingsManagerView, ArrowGraphSettingsManagerViewModel>("ArrowGraphSettingsDialog");
+
 
             containerRegistry.RegisterSingleton<ICoreViewModel, CoreViewModel>();
             containerRegistry.RegisterSingleton<IEarnedValueChartManagerViewModel, EarnedValueChartManagerViewModel>();

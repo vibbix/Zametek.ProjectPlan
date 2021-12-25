@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -19,6 +20,7 @@ using Zametek.Data.ProjectPlan;
 using Zametek.Event.ProjectPlan;
 using Zametek.Maths.Graphs;
 using Zametek.Utility;
+using Zametek.ViewModel.ProjectPlan.Miscellaneous;
 
 namespace Zametek.ViewModel.ProjectPlan
 {
@@ -34,11 +36,14 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly ISettingService m_SettingService;
         private readonly IMapper m_Mapper;
         private readonly IEventAggregator m_EventService;
+        private readonly IDialogService m_DialogService;
+        //legacy interactions
         private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
         private readonly InteractionRequest<Confirmation> m_ConfirmationInteractionRequest;
-        private readonly InteractionRequest<ResourceSettingsManagerConfirmation> m_ResourceSettingsManagerInteractionRequest;
-        private readonly InteractionRequest<ArrowGraphSettingsManagerConfirmation> m_ArrowGraphSettingsManagerInteractionRequest;
+        //private readonly InteractionRequest<ResourceSettingsManagerConfirmation> m_ResourceSettingsManagerInteractionRequest;
+        //private readonly InteractionRequest<ArrowGraphSettingsManagerConfirmation> m_ArrowGraphSettingsManagerInteractionRequest;
         private readonly InteractionRequest<Notification> m_AboutInteractionRequest;
+        //
 
         private SubscriptionToken m_ApplicationClosingSubscriptionToken;
 
@@ -52,7 +57,9 @@ namespace Zametek.ViewModel.ProjectPlan
             ISettingService settingService,
             IMapper mapper,
             IApplicationCommands applicationCommands,
-            IEventAggregator eventService)
+            IEventAggregator eventService,
+            IDialogService dialogService
+            )
             : base(eventService)
         {
             m_Lock = new object();
@@ -62,11 +69,12 @@ namespace Zametek.ViewModel.ProjectPlan
             m_Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             ApplicationCommands = applicationCommands ?? throw new ArgumentNullException(nameof(applicationCommands));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
+            m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
             m_NotificationInteractionRequest = new InteractionRequest<Notification>();
             m_ConfirmationInteractionRequest = new InteractionRequest<Confirmation>();
-            m_ResourceSettingsManagerInteractionRequest = new InteractionRequest<ResourceSettingsManagerConfirmation>();
-            m_ArrowGraphSettingsManagerInteractionRequest = new InteractionRequest<ArrowGraphSettingsManagerConfirmation>();
+            //m_ResourceSettingsManagerInteractionRequest = new InteractionRequest<ResourceSettingsManagerConfirmation>();
+            //m_ArrowGraphSettingsManagerInteractionRequest = new InteractionRequest<ArrowGraphSettingsManagerConfirmation>();
             m_AboutInteractionRequest = new InteractionRequest<Notification>();
 
             ResetProject();
@@ -567,7 +575,7 @@ namespace Zametek.ViewModel.ProjectPlan
                         }
                         catch (Exception ex)
                         {
-                            DispatchNotification(
+                            m_DialogService.DispatchNotification(
                                 Resource.ProjectPlan.Resources.Title_Error,
                                 ex.Message);
                         }
@@ -991,16 +999,6 @@ namespace Zametek.ViewModel.ProjectPlan
             PublishGanttChartUpdatedPayload();
         }
 
-        private void DispatchNotification(string title, object content)
-        {
-            m_NotificationInteractionRequest.Raise(
-                new Notification
-                {
-                    Title = title,
-                    Content = content
-                });
-        }
-
         #endregion
 
         #region Public Methods
@@ -1077,7 +1075,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1107,7 +1105,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        DispatchNotification(
+                        m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -1122,7 +1120,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1168,7 +1166,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        DispatchNotification(
+                        m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -1195,7 +1193,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();
@@ -1229,7 +1227,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1272,7 +1270,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1283,34 +1281,36 @@ namespace Zametek.ViewModel.ProjectPlan
             }
         }
 
-        public void DoOpenArrowGraphSettings()
+        public async void DoOpenArrowGraphSettings()
         {
             try
             {
                 IsBusy = true;
-                lock (m_Lock)
+                //lock (m_Lock)
+               // {
+                var confirmation = new ArrowGraphSettingsManagerConfirmation(ArrowGraphSettings.CloneObject())
                 {
-                    var confirmation = new ArrowGraphSettingsManagerConfirmation(ArrowGraphSettings.CloneObject())
-                    {
-                        Title = Resource.ProjectPlan.Resources.Title_ArrowGraphSettings
-                    };
-                    m_ArrowGraphSettingsManagerInteractionRequest.Raise(confirmation);
-                    if (!confirmation.Confirmed)
-                    {
-                        return;
-                    }
-
-                    m_CoreViewModel.RecordRedoUndo(() =>
-                    {
-                        m_CoreViewModel.UpdateArrowGraphSettings(confirmation.ArrowGraphSettings);
-                    });
+                };
+                DialogParameters dp = new DialogParameters();
+                var task = new TaskCompletionSource<ArrowGraphSettingsManagerConfirmation>();
+                dp.Add("title", Resource.ProjectPlan.Resources.Title_ArrowGraphSettings);
+                this.m_DialogService.Show("ArrowGraphSettingsDialog", dp, result => task.SetResult((ArrowGraphSettingsManagerConfirmation)result));
+                var res = await task.Task;
+                if (res.Result != ButtonResult.OK)
+                {
+                    return;
                 }
+                m_CoreViewModel.RecordRedoUndo(() =>
+                {
+                    m_CoreViewModel.UpdateArrowGraphSettings(confirmation.ArrowGraphSettings);
+                });
+                //}
                 IsProjectUpdated = true;
                 PublishArrowGraphSettingsUpdatedPayload();
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1327,14 +1327,14 @@ namespace Zametek.ViewModel.ProjectPlan
             {
                 IsBusy = true;
                 int resourcedCyclomaticComplexity = await RunCalculateResourcedCyclomaticComplexityAsync().ConfigureAwait(true);
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_ResourcedCyclomaticComplexity,
                     $@"{Resource.ProjectPlan.Resources.Message_ResourcedCyclomaticComplexity}{Environment.NewLine}{Environment.NewLine}{resourcedCyclomaticComplexity}"
                 );
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1353,7 +1353,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1373,7 +1373,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1402,7 +1402,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1422,7 +1422,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1440,10 +1440,6 @@ namespace Zametek.ViewModel.ProjectPlan
         public IInteractionRequest NotificationInteractionRequest => m_NotificationInteractionRequest;
 
         public IInteractionRequest ConfirmationInteractionRequest => m_ConfirmationInteractionRequest;
-
-        public IInteractionRequest ResourceSettingsManagerInteractionRequest => m_ResourceSettingsManagerInteractionRequest;
-
-        public IInteractionRequest ArrowGraphSettingsManagerInteractionRequest => m_ArrowGraphSettingsManagerInteractionRequest;
 
         public IInteractionRequest AboutInteractionRequest => m_AboutInteractionRequest;
 
@@ -1706,23 +1702,14 @@ namespace Zametek.ViewModel.ProjectPlan
                 if (m_CoreViewModel.Activities.Count == 0
                     || m_CoreViewModel.ResourceSettings.Resources.Count == 0)
                 {
-                    var context = new Notification
-                    {
-                        Title = Resource.ProjectPlan.Resources.Title_Error,
-                        Content = "Unable to export scenarios for a Project Plan with no activities or no resources."
-                    };
-                    m_NotificationInteractionRequest.Raise(context);
-
+                    m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error,
+                        "Unable to export scenarios for a Project Plan with no activities or no resources.");
                     return;
                 }
                 if (m_CoreViewModel.ResourceSettings.Resources.All(x => x.IsExplicitTarget))
                 {
-                    var context = new Notification
-                    {
-                        Title = Resource.ProjectPlan.Resources.Title_Error,
-                        Content = "Unable to export scenarios for a Project Plan when all resources are Explicit Targets."
-                    };
-                    m_NotificationInteractionRequest.Raise(context);
+                    m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error,
+                        "Unable to export scenarios for a Project Plan when all resources are Explicit Targets.");
                     return;
                 }
 
@@ -1792,7 +1779,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();
@@ -1887,7 +1874,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();
@@ -1948,7 +1935,7 @@ namespace Zametek.ViewModel.ProjectPlan
                 }
                 if (string.IsNullOrWhiteSpace(filename))
                 {
-                    DispatchNotification(
+                    m_DialogService.DispatchNotification(
                         Resource.ProjectPlan.Resources.Title_Error,
                         Resource.ProjectPlan.Resources.Message_EmptyFilename);
                 }
@@ -1961,7 +1948,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();

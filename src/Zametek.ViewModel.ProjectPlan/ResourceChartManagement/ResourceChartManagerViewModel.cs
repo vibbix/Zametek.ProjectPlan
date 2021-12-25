@@ -6,6 +6,7 @@ using Prism;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +38,7 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly ISettingService m_SettingService;
         private readonly IDateTimeCalculator m_DateTimeCalculator;
         private readonly IEventAggregator m_EventService;
+        private readonly IDialogService m_DialogService;
 
         private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
 
@@ -53,7 +55,8 @@ namespace Zametek.ViewModel.ProjectPlan
             IFileDialogService fileDialogService,
             ISettingService settingService,
             IDateTimeCalculator dateTimeCalculator,
-            IEventAggregator eventService)
+            IEventAggregator eventService, 
+            IDialogService dialogService)
             : base(eventService)
         {
             m_Lock = new object();
@@ -62,8 +65,8 @@ namespace Zametek.ViewModel.ProjectPlan
             m_SettingService = settingService ?? throw new ArgumentNullException(nameof(settingService));
             m_DateTimeCalculator = dateTimeCalculator ?? throw new ArgumentNullException(nameof(dateTimeCalculator));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
+            m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
-            m_NotificationInteractionRequest = new InteractionRequest<Notification>();
 
             ResourceChartPlotModel = null;
             ResourceChartOutputWidth = 1000;

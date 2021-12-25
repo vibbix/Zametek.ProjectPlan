@@ -13,9 +13,6 @@ namespace Zametek.Contract.ProjectPlan
 
         IInteractionRequest NotificationInteractionRequest { get; }
 
-        IInteractionRequest ResourceSettingsManagerInteractionRequest { get; }
-
-        IInteractionRequest ArrowGraphSettingsManagerInteractionRequest { get; }
 
         IInteractionRequest AboutInteractionRequest { get; }
 

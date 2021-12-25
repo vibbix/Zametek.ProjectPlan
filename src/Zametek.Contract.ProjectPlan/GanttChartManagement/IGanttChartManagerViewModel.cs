@@ -8,8 +8,6 @@ namespace Zametek.Contract.ProjectPlan
     public interface IGanttChartManagerViewModel
         : INamed
     {
-        IInteractionRequest NotificationInteractionRequest { get; }
-
         DateTime ProjectStart { get; }
 
         bool IsBusy { get; }

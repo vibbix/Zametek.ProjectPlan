@@ -7,8 +7,6 @@ namespace Zametek.Contract.ProjectPlan
     public interface IResourceChartManagerViewModel
         : INamed
     {
-        IInteractionRequest NotificationInteractionRequest { get; }
-
         bool IsBusy { get; }
 
         bool HasStaleOutputs { get; }
