@@ -70,9 +70,6 @@ namespace Zametek.ViewModel.ProjectPlan
             ApplicationCommands = applicationCommands ?? throw new ArgumentNullException(nameof(applicationCommands));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
             m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
-
-            m_NotificationInteractionRequest = new InteractionRequest<Notification>();
-            m_ConfirmationInteractionRequest = new InteractionRequest<Confirmation>();
             //m_ResourceSettingsManagerInteractionRequest = new InteractionRequest<ResourceSettingsManagerConfirmation>();
             //m_ArrowGraphSettingsManagerInteractionRequest = new InteractionRequest<ArrowGraphSettingsManagerConfirmation>();
             m_AboutInteractionRequest = new InteractionRequest<Notification>();
@@ -1790,13 +1787,8 @@ namespace Zametek.ViewModel.ProjectPlan
                 RaiseCanExecuteChangedAllCommands();
             }
 
-            var complete = new Notification
-            {
-                Title = Resource.ProjectPlan.Resources.Title_AppName,
-                Content = $"Exported scenarios to {filename}"
-            };
+            m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_AppName, $"Exported scenarios to {filename}");
 
-            m_NotificationInteractionRequest.Raise(complete);
         }
 
         public async Task DoExportCsvAsync()
@@ -1884,14 +1876,7 @@ namespace Zametek.ViewModel.ProjectPlan
                 IsBusy = false;
                 RaiseCanExecuteChangedAllCommands();
             }
-
-            var complete = new Notification
-            {
-                Title = Resource.ProjectPlan.Resources.Title_AppName,
-                Content = $"Exported csv to {filename}"
-            };
-
-            m_NotificationInteractionRequest.Raise(complete);
+            m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_AppName, $"Exported csv to {filename}");
         }
 
 

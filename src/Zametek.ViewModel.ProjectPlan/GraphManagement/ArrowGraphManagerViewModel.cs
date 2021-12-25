@@ -3,6 +3,7 @@ using Prism;
 using Prism.Commands;
 using Prism.Events;
 using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ using Zametek.Common.ProjectPlan;
 using Zametek.Contract.ProjectPlan;
 using Zametek.Event.ProjectPlan;
 using Zametek.Maths.Graphs;
+using Zametek.ViewModel.ProjectPlan.Miscellaneous;
 
 namespace Zametek.ViewModel.ProjectPlan
 {
@@ -28,8 +30,7 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly IProjectService m_ProjectService;
         private readonly IMapper m_Mapper;
         private readonly IEventAggregator m_EventService;
-
-        private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
+        private readonly IDialogService m_DialogService;
 
         private SubscriptionToken m_GraphCompiledSubscriptionToken;
         private SubscriptionToken m_ArrowGraphSettingsUpdatedSubscriptionToken;
@@ -45,7 +46,8 @@ namespace Zametek.ViewModel.ProjectPlan
             ICoreViewModel coreViewModel,
             IProjectService projectService,
             IMapper mapper,
-            IEventAggregator eventService)
+            IEventAggregator eventService,
+            IDialogService dialogService)
             : base(eventService)
         {
             m_Lock = new object();
@@ -53,8 +55,7 @@ namespace Zametek.ViewModel.ProjectPlan
             m_ProjectService = projectService ?? throw new ArgumentNullException(nameof(projectService));
             m_Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
-
-            m_NotificationInteractionRequest = new InteractionRequest<Notification>();
+            m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
             InitializeCommands();
             SubscribeToEvents();
@@ -346,17 +347,6 @@ namespace Zametek.ViewModel.ProjectPlan
             return (new GraphXEdgeFormatLookup(arrowGraphSettings.EdgeTypeFormats),
                 new SlackColorFormatLookup(arrowGraphSettings.ActivitySeverities));
         }
-
-        private void DispatchNotification(string title, object content)
-        {
-            m_NotificationInteractionRequest.Raise(
-                new Notification
-                {
-                    Title = title,
-                    Content = content
-                });
-        }
-
         #endregion
 
         #region Public Methods
@@ -372,7 +362,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -388,8 +378,6 @@ namespace Zametek.ViewModel.ProjectPlan
         #region IArrowGraphManagerViewModel Members
 
         public string Title => Resource.ProjectPlan.Resources.Label_ArrowGraphViewTitle;
-
-        public IInteractionRequest NotificationInteractionRequest => m_NotificationInteractionRequest;
 
         public bool IsBusy
         {

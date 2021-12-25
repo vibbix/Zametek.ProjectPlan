@@ -18,6 +18,7 @@ using Zametek.Common.ProjectPlan;
 using Zametek.Contract.ProjectPlan;
 using Zametek.Event.ProjectPlan;
 using Zametek.Maths.Graphs;
+using Zametek.ViewModel.ProjectPlan.Miscellaneous;
 
 namespace Zametek.ViewModel.ProjectPlan
 {
@@ -39,8 +40,6 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly IDateTimeCalculator m_DateTimeCalculator;
         private readonly IEventAggregator m_EventService;
         private readonly IDialogService m_DialogService;
-
-        private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
 
         private SubscriptionToken m_GraphCompilationUpdatedSubscriptionToken;
 
@@ -173,7 +172,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        DispatchNotification(
+                        m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -187,7 +186,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                DispatchNotification(
+                m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -411,23 +410,11 @@ namespace Zametek.ViewModel.ProjectPlan
             }
         }
 
-        private void DispatchNotification(string title, object content)
-        {
-            m_NotificationInteractionRequest.Raise(
-                new Notification
-                {
-                    Title = title,
-                    Content = content
-                });
-        }
-
         #endregion
 
         #region IResourceChartManagerViewModel Members
 
         public string Title => Resource.ProjectPlan.Resources.Label_ResourceChartsViewTitle;
-
-        public IInteractionRequest NotificationInteractionRequest => m_NotificationInteractionRequest;
 
         public bool IsBusy
         {

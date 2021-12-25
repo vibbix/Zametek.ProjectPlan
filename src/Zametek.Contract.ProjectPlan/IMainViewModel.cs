@@ -9,10 +9,6 @@ namespace Zametek.Contract.ProjectPlan
     public interface IMainViewModel
         : INamed
     {
-        IInteractionRequest ConfirmationInteractionRequest { get; }
-
-        IInteractionRequest NotificationInteractionRequest { get; }
-
 
         IInteractionRequest AboutInteractionRequest { get; }
 
