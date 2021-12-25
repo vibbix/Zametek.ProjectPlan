@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using AvalonDock;
+using Prism.DryIoc;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
-using Prism.Unity;
 using System;
 using System.Globalization;
 using System.Threading;
