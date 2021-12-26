@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using System.Text;
-
-namespace Zametek.Contract.ProjectPlan
+﻿namespace Zametek.Contract.ProjectPlan
 {
     public interface IFileDialogService
     {

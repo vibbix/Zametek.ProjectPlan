@@ -1,5 +1,4 @@
-﻿using Prism.Interactivity.InteractionRequest;
-using Prism.Services.Dialogs;
+﻿using Prism.Services.Dialogs;
 using System.Collections.ObjectModel;
 using Zametek.Contract.ProjectPlan;
 
@@ -22,7 +21,8 @@ namespace Zametek.ViewModel.ProjectPlan
         #endregion
 
         #region Properties
-        public ArrowGraphSettingsManagerConfirmation Confirmation {
+        public ArrowGraphSettingsManagerConfirmation Confirmation
+        {
             get { return managerConfirmation; }
             private set { SetProperty(ref managerConfirmation, value); }
 

@@ -3,7 +3,6 @@ using FluentDateTime;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Events;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -1220,21 +1219,21 @@ namespace Zametek.ViewModel.ProjectPlan
             try
             {
                 IsBusy = true;
-/*                lock (m_Lock)
-                {*/
-                    var conf = new ResourceSettingsManagerConfirmation(ResourceSettings.CloneObject());
-                    //conf.Add();
-                    DialogParameters idp = new DialogParameters()
+                /*                lock (m_Lock)
+                                {*/
+                var conf = new ResourceSettingsManagerConfirmation(ResourceSettings.CloneObject());
+                //conf.Add();
+                DialogParameters idp = new DialogParameters()
                     {
                         { "title" , Resource.ProjectPlan.Resources.Title_ResourceSettings},
                         { "confirmation", conf }
                     };
-                    var asyncResult = this.m_DialogService.ShowAsync("ResourceSettingsDialog", idp);
-                    ResourceSettingsManagerConfirmation res = (ResourceSettingsManagerConfirmation)await asyncResult;
-                    if (res.Result != ButtonResult.OK)
-                    {
-                        return;
-                    }
+                var asyncResult = this.m_DialogService.ShowAsync("ResourceSettingsDialog", idp);
+                ResourceSettingsManagerConfirmation res = (ResourceSettingsManagerConfirmation)await asyncResult;
+                if (res.Result != ButtonResult.OK)
+                {
+                    return;
+                }
                 m_CoreViewModel.RecordRedoUndo(() =>
                 {
                     m_CoreViewModel.UpdateResourceSettings(res.ResourceSettings);

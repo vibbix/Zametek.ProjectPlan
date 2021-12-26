@@ -1,5 +1,4 @@
 ﻿using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Services.Dialogs;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -37,7 +36,7 @@ namespace Zametek.ViewModel.ProjectPlan
 
         public ResourceSettingsManagerConfirmation Confirmation
         {
-            get {  return _confirmation; }
+            get { return _confirmation; }
             set
             {
                 SetProperty(ref _confirmation, value, nameof(Confirmation));

@@ -1,5 +1,4 @@
 ﻿using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Services.Dialogs;
 using System;
 using System.Windows.Input;
@@ -52,7 +51,7 @@ namespace Zametek.ViewModel.ProjectPlan
         #region Overrides
         public override bool CanCloseDialog()
         {
-            return false;
+            return true;
         }
 
         #endregion

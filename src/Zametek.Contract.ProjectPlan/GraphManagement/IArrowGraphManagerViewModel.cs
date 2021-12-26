@@ -1,5 +1,4 @@
-﻿using Prism.Interactivity.InteractionRequest;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using Zametek.Common.ProjectPlan;
 
 namespace Zametek.Contract.ProjectPlan

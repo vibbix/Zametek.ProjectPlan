@@ -2,7 +2,6 @@
 using Prism;
 using Prism.Commands;
 using Prism.Events;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;

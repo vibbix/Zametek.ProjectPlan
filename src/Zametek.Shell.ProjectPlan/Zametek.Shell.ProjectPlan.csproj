@@ -18,9 +18,9 @@
     <PackageReference Include="OxyPlot.Contrib" Version="2.1.0" />
     <PackageReference Include="OxyPlot.Wpf" Version="2.1.0" />
     <PackageReference Include="OxyPlot.Wpf.Shared" Version="2.1.0" />
-    <PackageReference Include="Prism.Core" Version="7.2.0.1422" />
-    <PackageReference Include="Prism.DryIoc" Version="7.2.0.1422" />
-    <PackageReference Include="Prism.Wpf" Version="7.2.0.1422" />
+    <PackageReference Include="Prism.Core" Version="8.1.97" />
+    <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Zametek.View.ProjectPlan\Zametek.View.ProjectPlan.csproj" />

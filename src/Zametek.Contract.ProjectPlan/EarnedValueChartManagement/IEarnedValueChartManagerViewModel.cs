@@ -1,5 +1,4 @@
 ﻿using OxyPlot;
-using Prism.Interactivity.InteractionRequest;
 using System.Windows.Input;
 
 namespace Zametek.Contract.ProjectPlan

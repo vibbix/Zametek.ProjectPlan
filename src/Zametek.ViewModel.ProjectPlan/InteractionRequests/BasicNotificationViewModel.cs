@@ -1,5 +1,4 @@
 ﻿using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using System;
@@ -31,8 +30,8 @@ namespace Zametek.ViewModel.ProjectPlan
 
         public object Content
         {
-            get{ return _content; }
-            private set{ SetProperty(ref _content, value); }
+            get { return _content; }
+            private set { SetProperty(ref _content, value); }
         }
 
         public string Title
@@ -93,7 +92,7 @@ namespace Zametek.ViewModel.ProjectPlan
 
         public virtual void OnDialogClosed()
         {
-            
+
         }
 
 

@@ -19,7 +19,7 @@ namespace Zametek.Contract.ProjectPlan
         ResourceSettingsModel DefaultResourceSettings { get; }
 
         void SetMainViewSettings(MainViewSettingsModel mainViewSettings);
-        
+
         MainViewSettingsModel MainViewSettings { get; }
 
         void Reset();

@@ -193,7 +193,7 @@ namespace Zametek.Shell.ProjectPlan
 
         public MainViewSettingsModel MainViewSettings
         {
-            get 
+            get
             {
                 return new MainViewSettingsModel
                 {

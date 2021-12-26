@@ -2,7 +2,6 @@
 using Prism;
 using Prism.Commands;
 using Prism.Events;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Services.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -44,7 +43,7 @@ namespace Zametek.ViewModel.ProjectPlan
         public ActivitiesManagerViewModel(
             ICoreViewModel coreViewModel,
             IMapper mapper,
-            IEventAggregator eventService, 
+            IEventAggregator eventService,
             IDialogService dialogService)
             : base(eventService)
         {
