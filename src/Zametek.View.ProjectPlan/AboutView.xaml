@@ -10,6 +10,15 @@
              prism:ViewModelLocator.AutoWireViewModel="False"
              d:DesignHeight="300" d:DesignWidth="300">
 
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+    
     <DockPanel Margin="7">
         <DockPanel DockPanel.Dock="Bottom"
                    Margin="0,11,0,0">

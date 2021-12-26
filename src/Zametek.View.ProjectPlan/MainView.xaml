@@ -3,12 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:Zametek.View.ProjectPlan"
         xmlns:properties="clr-namespace:Zametek.Resource.ProjectPlan;assembly=Zametek.Resource.ProjectPlan"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:avalonDock="clr-namespace:AvalonDock;assembly=AvalonDock"
         xmlns:avalonDockLayout="clr-namespace:AvalonDock.Layout;assembly=AvalonDock"
-        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         xmlns:prism="http://prismlibrary.com/"
         xmlns:common="clr-namespace:Zametek.Common.ProjectPlan;assembly=Zametek.Common.ProjectPlan"
         prism:ViewModelLocator.AutoWireViewModel="False"
@@ -52,89 +50,6 @@
             </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
-    
-    <!--<i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding Path=ConfirmationInteractionRequest, Mode=OneWay}">
-            <prism:PopupWindowAction IsModal="True"
-                                     CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="{x:Type Window}">
-                        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-                        <Setter Property="ResizeMode" Value="NoResize"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <local:BasicConfirmationView />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-
-        <prism:InteractionRequestTrigger SourceObject="{Binding Path=NotificationInteractionRequest, Mode=OneWay}">
-            <prism:PopupWindowAction IsModal="True"
-                                     CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="{x:Type Window}">
-                        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-                        <Setter Property="ResizeMode" Value="NoResize"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <local:BasicNotificationView />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-
-        <prism:InteractionRequestTrigger SourceObject="{Binding Path=ResourceSettingsManagerInteractionRequest, Mode=OneWay}">
-            <prism:PopupWindowAction IsModal="True"
-                                     CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="{x:Type Window}">
-                        <Setter Property="MinHeight" Value="250"/>
-                        <Setter Property="Height" Value="450"/>
-                        <Setter Property="MinWidth" Value="450"/>
-                        <Setter Property="Width" Value="1000"/>
-                        <Setter Property="ResizeMode" Value="CanResize"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <local:ResourceSettingsManagerView />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-
-        <prism:InteractionRequestTrigger SourceObject="{Binding Path=ArrowGraphSettingsManagerInteractionRequest, Mode=OneWay}">
-            <prism:PopupWindowAction IsModal="True"
-                                     CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="{x:Type Window}">
-                        <Setter Property="MinHeight" Value="250"/>
-                        <Setter Property="Height" Value="250"/>
-                        <Setter Property="MinWidth" Value="350"/>
-                        <Setter Property="Width" Value="350"/>
-                        <Setter Property="ResizeMode" Value="CanMinimize"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <local:ArrowGraphSettingsManagerView />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-
-        <prism:InteractionRequestTrigger SourceObject="{Binding Path=AboutInteractionRequest, Mode=OneWay}">
-            <prism:PopupWindowAction IsModal="True"
-                                     CenterOverAssociatedObject="True">
-                <prism:PopupWindowAction.WindowStyle>
-                    <Style TargetType="{x:Type Window}">
-                        <Setter Property="SizeToContent" Value="WidthAndHeight"/>
-                        <Setter Property="ResizeMode" Value="NoResize"/>
-                    </Style>
-                </prism:PopupWindowAction.WindowStyle>
-                <prism:PopupWindowAction.WindowContent>
-                    <local:AboutView />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-    </i:Interaction.Triggers>-->
 
     <Window.InputBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding Path=NewProjectPlanFileCommand, Mode=OneWay}"/>

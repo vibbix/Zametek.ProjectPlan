@@ -9,6 +9,15 @@
              prism:ViewModelLocator.AutoWireViewModel="False"
              d:DesignHeight="300" d:DesignWidth="300">
 
+    <prism:Dialog.WindowStyle>
+        <Style TargetType="Window">
+            <Setter Property="prism:Dialog.WindowStartupLocation" Value="CenterScreen" />
+            <Setter Property="ResizeMode" Value="NoResize"/>
+            <Setter Property="ShowInTaskbar" Value="False"/>
+            <Setter Property="SizeToContent" Value="WidthAndHeight"/>
+        </Style>
+    </prism:Dialog.WindowStyle>
+
     <UserControl.InputBindings>
         <KeyBinding Gesture="Escape" Command="{Binding Path=CancelCommand, Mode=OneWay}"/>
     </UserControl.InputBindings>
