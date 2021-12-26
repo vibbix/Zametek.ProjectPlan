@@ -2,23 +2,63 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Zametek.ViewModel.ProjectPlan.Miscellaneous
 {
     public static class DialogServiceExtensions
     {
-        public static void ShowNotification(this IDialogService dialogService, string message, Action<IDialogResult> callBack)
+
+        /// <summary>
+        /// Shows a modal dialog, return the result as a task
+        /// </summary>
+        /// <param name="dialogService">The service to use</param>
+        /// <param name="name">Name of the dialog</param>
+        /// <param name="parameters">The parameters to pass</param>
+        /// <returns>A Task containing the result</returns>
+        public static Task<IDialogResult> ShowDialogAsync(this IDialogService dialogService, string name, IDialogParameters parameters)
         {
-            dialogService.ShowDialog("NotificationDialog", new DialogParameters($"message={message}"), callBack);
+            var t = new TaskCompletionSource<IDialogResult>();
+            dialogService.ShowDialog(name, parameters, s => t.TrySetResult(s));
+            return t.Task;
         }
 
-        public static void DispatchNotification(this IDialogService dialogService, string title, string message)
+        /// <summary>
+        /// Shows a non-modal dialog, return the result as a task
+        /// </summary>
+        /// <param name="dialogService">The service to use</param>
+        /// <param name="name">Name of the dialog</param>
+        /// <param name="parameters">The parameters to pass</param>
+        /// <returns>A Task containing the result</returns>
+        public static Task<IDialogResult> ShowAsync(this IDialogService dialogService, string name, IDialogParameters parameters)
         {
-            var dp = new DialogParameters($"content={message}");
-            dp.Add("title", title);
-            dp.Add("content", message);
-            dialogService.ShowDialog("NotificationDialog", dp, null); ;
+            var t = new TaskCompletionSource<IDialogResult>();
+            dialogService.Show(name, parameters, s => t.TrySetResult(s));
+            return t.Task;
+        }
 
+        public static Task<IDialogResult> DispatchNotification(this IDialogService dialogService, string title, string message)
+        {
+            var dp = new DialogParameters($"content={message}")
+            {
+                { "title", title },
+                { "content", message }
+            };
+            var t = new TaskCompletionSource<IDialogResult>();
+            dialogService.ShowDialog("NotificationDialog", dp, s => t.TrySetResult(s));
+            return t.Task;
+        }
+
+        public static Task<IDialogResult> DispatchConfirmation(this IDialogService dialogService, string title, string message)
+        {
+            var dp = new DialogParameters($"content={message}")
+            {
+                { "title", title },
+                { "content", message }
+            };
+            var t = new TaskCompletionSource<IDialogResult>();
+            dialogService.ShowDialog("ConfirmationDialog", dp, s => t.TrySetResult(s));
+            return t.Task;
         }
     }
 }

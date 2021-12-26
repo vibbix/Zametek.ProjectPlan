@@ -53,7 +53,6 @@ namespace Zametek.ViewModel.ProjectPlan
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
             m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
-
             InitializeCommands();
             SubscribeToEvents();
 
@@ -109,7 +108,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }

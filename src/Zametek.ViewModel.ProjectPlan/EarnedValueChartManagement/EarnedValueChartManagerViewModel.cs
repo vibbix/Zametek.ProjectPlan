@@ -389,7 +389,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        m_DialogService.DispatchNotification(
+                        await m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -403,7 +403,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }

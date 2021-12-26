@@ -265,7 +265,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -297,7 +297,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -337,7 +337,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }

@@ -57,6 +57,8 @@ namespace Zametek.Shell.ProjectPlan
             containerRegistry.RegisterDialog<BasicNotificationView, BasicNotificationViewModel>("NotificationDialog");
             containerRegistry.RegisterDialog<BasicConfirmationView, BasicConfirmationViewModel>("ConfirmationDialog");
             containerRegistry.RegisterDialog<ArrowGraphSettingsManagerView, ArrowGraphSettingsManagerViewModel>("ArrowGraphSettingsDialog");
+            containerRegistry.RegisterDialog<ResourceSettingsManagerView, ResourceSettingsManagerViewModel>("ResourceSettingsDialog");
+            containerRegistry.RegisterDialog<AboutView, AboutViewModel>("AboutDialog");
 
 
             containerRegistry.RegisterSingleton<ICoreViewModel, CoreViewModel>();

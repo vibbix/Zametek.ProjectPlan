@@ -37,13 +37,6 @@ namespace Zametek.ViewModel.ProjectPlan
         private readonly IMapper m_Mapper;
         private readonly IEventAggregator m_EventService;
         private readonly IDialogService m_DialogService;
-        //legacy interactions
-        private readonly InteractionRequest<Notification> m_NotificationInteractionRequest;
-        private readonly InteractionRequest<Confirmation> m_ConfirmationInteractionRequest;
-        //private readonly InteractionRequest<ResourceSettingsManagerConfirmation> m_ResourceSettingsManagerInteractionRequest;
-        //private readonly InteractionRequest<ArrowGraphSettingsManagerConfirmation> m_ArrowGraphSettingsManagerInteractionRequest;
-        private readonly InteractionRequest<Notification> m_AboutInteractionRequest;
-        //
 
         private SubscriptionToken m_ApplicationClosingSubscriptionToken;
 
@@ -70,9 +63,6 @@ namespace Zametek.ViewModel.ProjectPlan
             ApplicationCommands = applicationCommands ?? throw new ArgumentNullException(nameof(applicationCommands));
             m_EventService = eventService ?? throw new ArgumentNullException(nameof(eventService));
             m_DialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
-            //m_ResourceSettingsManagerInteractionRequest = new InteractionRequest<ResourceSettingsManagerConfirmation>();
-            //m_ArrowGraphSettingsManagerInteractionRequest = new InteractionRequest<ArrowGraphSettingsManagerConfirmation>();
-            m_AboutInteractionRequest = new InteractionRequest<Notification>();
 
             ResetProject();
 
@@ -320,9 +310,9 @@ namespace Zametek.ViewModel.ProjectPlan
             set;
         }
 
-        private void CloseProject()
+        private async void CloseProject()
         {
-            DoCloseProject();
+            await DoCloseProject();
         }
 
         private DelegateCommandBase InternalOpenResourceSettingsCommand
@@ -449,9 +439,9 @@ namespace Zametek.ViewModel.ProjectPlan
             set;
         }
 
-        private void OpenAbout()
+        private async void OpenAbout()
         {
-            DoOpenAbout();
+            await DoOpenAbout();
         }
 
         private async void ExportScenarios()
@@ -549,6 +539,7 @@ namespace Zametek.ViewModel.ProjectPlan
 
         private void SubscribeToEvents()
         {
+            //TODO: Refactor this
             m_ApplicationClosingSubscriptionToken =
                 m_EventService.GetEvent<PubSubEvent<ApplicationClosingPayload>>()
                     .Subscribe(payload =>
@@ -558,13 +549,11 @@ namespace Zametek.ViewModel.ProjectPlan
                             IsBusy = true;
                             if (IsProjectUpdated)
                             {
-                                var confirmation = new Confirmation
-                                {
-                                    Title = Resource.ProjectPlan.Resources.Title_UnsavedChanges,
-                                    Content = Resource.ProjectPlan.Resources.Message_UnsavedChanges
-                                };
-                                m_ConfirmationInteractionRequest.Raise(confirmation);
-                                if (!confirmation.Confirmed)
+                                var task = m_DialogService.DispatchConfirmation(Resource.ProjectPlan.Resources.Title_UnsavedChanges,
+                                    Resource.ProjectPlan.Resources.Message_UnsavedChanges);
+                                task.Wait();
+                                var confirmation = task.Result;
+                                if (confirmation.Result != ButtonResult.OK)
                                 {
                                     payload.IsCanceled = true;
                                 }
@@ -574,7 +563,7 @@ namespace Zametek.ViewModel.ProjectPlan
                         {
                             m_DialogService.DispatchNotification(
                                 Resource.ProjectPlan.Resources.Title_Error,
-                                ex.Message);
+                                ex.Message).Wait();
                         }
                         finally
                         {
@@ -1072,7 +1061,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1102,7 +1091,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        m_DialogService.DispatchNotification(
+                        await m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -1117,7 +1106,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1135,14 +1124,9 @@ namespace Zametek.ViewModel.ProjectPlan
                 IsBusy = true;
                 if (IsProjectUpdated)
                 {
-                    var confirmation = new Confirmation
-
-                    {
-                        Title = Resource.ProjectPlan.Resources.Title_UnsavedChanges,
-                        Content = Resource.ProjectPlan.Resources.Message_UnsavedChanges
-                    };
-                    m_ConfirmationInteractionRequest.Raise(confirmation);
-                    if (!confirmation.Confirmed)
+                    var confirmation = await m_DialogService.DispatchConfirmation(Resource.ProjectPlan.Resources.Title_UnsavedChanges,
+                        Resource.ProjectPlan.Resources.Message_UnsavedChanges);
+                    if (confirmation.Result != ButtonResult.OK)
                     {
                         return;
                     }
@@ -1163,7 +1147,7 @@ namespace Zametek.ViewModel.ProjectPlan
                     string filename = m_FileDialogService.Filename;
                     if (string.IsNullOrWhiteSpace(filename))
                     {
-                        m_DialogService.DispatchNotification(
+                        await m_DialogService.DispatchNotification(
                             Resource.ProjectPlan.Resources.Title_Error,
                             Resource.ProjectPlan.Resources.Message_EmptyFilename);
                     }
@@ -1190,7 +1174,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();
@@ -1202,20 +1186,16 @@ namespace Zametek.ViewModel.ProjectPlan
             }
         }
 
-        public void DoCloseProject()
+        public async Task DoCloseProject()
         {
             try
             {
                 IsBusy = true;
                 if (IsProjectUpdated)
                 {
-                    var confirmation = new Confirmation
-                    {
-                        Title = Resource.ProjectPlan.Resources.Title_UnsavedChanges,
-                        Content = Resource.ProjectPlan.Resources.Message_UnsavedChanges
-                    };
-                    m_ConfirmationInteractionRequest.Raise(confirmation);
-                    if (!confirmation.Confirmed)
+                    var confirmation = await m_DialogService.DispatchConfirmation(Resource.ProjectPlan.Resources.Title_UnsavedChanges,
+                        Resource.ProjectPlan.Resources.Message_UnsavedChanges);
+                    if (confirmation.Result != ButtonResult.OK)
                     {
                         return;
                     }
@@ -1224,7 +1204,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1240,36 +1220,33 @@ namespace Zametek.ViewModel.ProjectPlan
             try
             {
                 IsBusy = true;
-                lock (m_Lock)
-                {
-                    var confirmation = new ResourceSettingsManagerConfirmation(ResourceSettings.CloneObject())
+/*                lock (m_Lock)
+                {*/
+                    var conf = new ResourceSettingsManagerConfirmation(ResourceSettings.CloneObject());
+                    //conf.Add();
+                    DialogParameters idp = new DialogParameters()
                     {
-                        Title = Resource.ProjectPlan.Resources.Title_ResourceSettings
+                        { "title" , Resource.ProjectPlan.Resources.Title_ResourceSettings},
+                        { "confirmation", conf }
                     };
-                    m_ResourceSettingsManagerInteractionRequest.Raise(confirmation);
-                    if (!confirmation.Confirmed)
+                    var asyncResult = this.m_DialogService.ShowAsync("ResourceSettingsDialog", idp);
+                    ResourceSettingsManagerConfirmation res = (ResourceSettingsManagerConfirmation)await asyncResult;
+                    if (res.Result != ButtonResult.OK)
                     {
                         return;
                     }
-
-                    m_CoreViewModel.RecordRedoUndo(() =>
-                    {
-                        m_CoreViewModel.UpdateResourceSettings(confirmation.ResourceSettings);
-                    });
-                }
-
+                m_CoreViewModel.RecordRedoUndo(() =>
+                {
+                    m_CoreViewModel.UpdateResourceSettings(res.ResourceSettings);
+                });
                 HasStaleOutputs = true;
                 IsProjectUpdated = true;
-
                 await RunAutoCompileAsync().ConfigureAwait(true);
-
                 m_CoreViewModel.UpdateActivitiesAllocatedToResources();
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
-                    Resource.ProjectPlan.Resources.Title_Error,
-                    ex.Message);
+                await m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error, ex.Message);
             }
             finally
             {
@@ -1284,22 +1261,21 @@ namespace Zametek.ViewModel.ProjectPlan
             {
                 IsBusy = true;
                 //lock (m_Lock)
-               // {
-                var confirmation = new ArrowGraphSettingsManagerConfirmation(ArrowGraphSettings.CloneObject())
+                // {
+                var confirmation = new ArrowGraphSettingsManagerConfirmation(ArrowGraphSettings.CloneObject());
+                DialogParameters dp = new DialogParameters
                 {
+                    { "title", Resource.ProjectPlan.Resources.Title_ArrowGraphSettings }
                 };
-                DialogParameters dp = new DialogParameters();
-                var task = new TaskCompletionSource<ArrowGraphSettingsManagerConfirmation>();
-                dp.Add("title", Resource.ProjectPlan.Resources.Title_ArrowGraphSettings);
-                this.m_DialogService.Show("ArrowGraphSettingsDialog", dp, result => task.SetResult((ArrowGraphSettingsManagerConfirmation)result));
-                var res = await task.Task;
+                var task = this.m_DialogService.ShowDialogAsync("ArrowGraphSettingsDialog", dp);
+                var res = await task;
                 if (res.Result != ButtonResult.OK)
                 {
                     return;
                 }
                 m_CoreViewModel.RecordRedoUndo(() =>
                 {
-                    m_CoreViewModel.UpdateArrowGraphSettings(confirmation.ArrowGraphSettings);
+                    m_CoreViewModel.UpdateArrowGraphSettings(((ArrowGraphSettingsManagerConfirmation)res).ArrowGraphSettings);
                 });
                 //}
                 IsProjectUpdated = true;
@@ -1307,7 +1283,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1324,14 +1300,14 @@ namespace Zametek.ViewModel.ProjectPlan
             {
                 IsBusy = true;
                 int resourcedCyclomaticComplexity = await RunCalculateResourcedCyclomaticComplexityAsync().ConfigureAwait(true);
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_ResourcedCyclomaticComplexity,
                     $@"{Resource.ProjectPlan.Resources.Message_ResourcedCyclomaticComplexity}{Environment.NewLine}{Environment.NewLine}{resourcedCyclomaticComplexity}"
                 );
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1350,7 +1326,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1370,7 +1346,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1410,16 +1386,16 @@ namespace Zametek.ViewModel.ProjectPlan
             }
         }
 
-        public void DoOpenAbout()
+        public async Task DoOpenAbout()
         {
             try
             {
                 IsBusy = true;
-                m_AboutInteractionRequest.Raise(new Notification { Title = Resource.ProjectPlan.Resources.Title_AppName });
+                await m_DialogService.ShowDialogAsync("AboutDialog", new DialogParameters() { { "title", Resource.ProjectPlan.Resources.Title_AppName } });
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
             }
@@ -1433,12 +1409,6 @@ namespace Zametek.ViewModel.ProjectPlan
         #endregion
 
         #region IMainViewModel Members
-
-        public IInteractionRequest NotificationInteractionRequest => m_NotificationInteractionRequest;
-
-        public IInteractionRequest ConfirmationInteractionRequest => m_ConfirmationInteractionRequest;
-
-        public IInteractionRequest AboutInteractionRequest => m_AboutInteractionRequest;
 
         public bool IsBusy
         {
@@ -1699,13 +1669,13 @@ namespace Zametek.ViewModel.ProjectPlan
                 if (m_CoreViewModel.Activities.Count == 0
                     || m_CoreViewModel.ResourceSettings.Resources.Count == 0)
                 {
-                    m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error,
+                    await m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error,
                         "Unable to export scenarios for a Project Plan with no activities or no resources.");
                     return;
                 }
                 if (m_CoreViewModel.ResourceSettings.Resources.All(x => x.IsExplicitTarget))
                 {
-                    m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error,
+                    await m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_Error,
                         "Unable to export scenarios for a Project Plan when all resources are Explicit Targets.");
                     return;
                 }
@@ -1776,7 +1746,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();
@@ -1787,7 +1757,7 @@ namespace Zametek.ViewModel.ProjectPlan
                 RaiseCanExecuteChangedAllCommands();
             }
 
-            m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_AppName, $"Exported scenarios to {filename}");
+            await m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_AppName, $"Exported scenarios to {filename}");
 
         }
 
@@ -1861,12 +1831,13 @@ namespace Zametek.ViewModel.ProjectPlan
                 var csv = string.Join(Environment.NewLine, lines);
 
                 File.WriteAllText(Path.Combine(directory, filename), csv);
-
                 IsBusy = false;
+                await m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_AppName, $"Exported csv to {filename}");
+
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();
@@ -1876,7 +1847,6 @@ namespace Zametek.ViewModel.ProjectPlan
                 IsBusy = false;
                 RaiseCanExecuteChangedAllCommands();
             }
-            m_DialogService.DispatchNotification(Resource.ProjectPlan.Resources.Title_AppName, $"Exported csv to {filename}");
         }
 
 
@@ -1887,13 +1857,9 @@ namespace Zametek.ViewModel.ProjectPlan
                 IsBusy = true;
                 if (IsProjectUpdated)
                 {
-                    var confirmation = new Confirmation
-                    {
-                        Title = Resource.ProjectPlan.Resources.Title_UnsavedChanges,
-                        Content = Resource.ProjectPlan.Resources.Message_UnsavedChanges
-                    };
-                    m_ConfirmationInteractionRequest.Raise(confirmation);
-                    if (!confirmation.Confirmed)
+                    var confirmation = await m_DialogService.DispatchConfirmation(Resource.ProjectPlan.Resources.Title_UnsavedChanges,
+                        Resource.ProjectPlan.Resources.Message_UnsavedChanges);
+                    if (confirmation.Result != ButtonResult.OK)
                     {
                         return;
                     }
@@ -1920,7 +1886,7 @@ namespace Zametek.ViewModel.ProjectPlan
                 }
                 if (string.IsNullOrWhiteSpace(filename))
                 {
-                    m_DialogService.DispatchNotification(
+                    await m_DialogService.DispatchNotification(
                         Resource.ProjectPlan.Resources.Title_Error,
                         Resource.ProjectPlan.Resources.Message_EmptyFilename);
                 }
@@ -1933,7 +1899,7 @@ namespace Zametek.ViewModel.ProjectPlan
             }
             catch (Exception ex)
             {
-                m_DialogService.DispatchNotification(
+                await m_DialogService.DispatchNotification(
                     Resource.ProjectPlan.Resources.Title_Error,
                     ex.Message);
                 ResetProject();

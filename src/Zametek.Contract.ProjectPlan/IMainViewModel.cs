@@ -10,11 +10,7 @@ namespace Zametek.Contract.ProjectPlan
         : INamed
     {
 
-        IInteractionRequest AboutInteractionRequest { get; }
-
         bool IsBusy { get; }
-
-        string Title { get; }
 
         bool IsProjectUpdated { get; }
 
