@@ -53,7 +53,7 @@
         </ResourceDictionary>
     </Window.Resources>
     
-    <i:Interaction.Triggers>
+    <!--<i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding Path=ConfirmationInteractionRequest, Mode=OneWay}">
             <prism:PopupWindowAction IsModal="True"
                                      CenterOverAssociatedObject="True">
@@ -134,7 +134,7 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
-    </i:Interaction.Triggers>
+    </i:Interaction.Triggers>-->
 
     <Window.InputBindings>
         <KeyBinding Gesture="Ctrl+N" Command="{Binding Path=NewProjectPlanFileCommand, Mode=OneWay}"/>

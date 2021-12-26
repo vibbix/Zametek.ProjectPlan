@@ -70,7 +70,7 @@
         </Style>
     </UserControl.Resources>
     
-    <i:Interaction.Triggers>
+    <!--<i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding Path=NotificationInteractionRequest, Mode=OneWay}">
             <prism:PopupWindowAction IsModal="True"
                                      CenterOverAssociatedObject="True">
@@ -85,7 +85,7 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
-    </i:Interaction.Triggers>
+    </i:Interaction.Triggers>-->
     
     <DockPanel>
         <Grid Width="150"
